@@ -6,6 +6,7 @@ const ClientError = require('./clientError');
 module.exports = function(es) {
     const app = express();
 
+    // application scope
     const repository = require('./cardRepository')(recreateFrom, es);
 
     app.use(express.json());
@@ -28,6 +29,8 @@ module.exports = function(es) {
     }
 
     function withPersistence(fn) {
+        // request scope
+        const repository = require('./cardRepository')(recreateFrom, es);
         return async (body) => {
             const c = await repository.load(body.uuid);
             fn(c, body);

@@ -12,6 +12,10 @@ function initStore(config = {
     }
 }) {
     const es = require('eventstore')(config);
+    es.useEventPublisher(function(evt, callback) {
+        console.log('emitting event', evt);
+        callback();
+    });
     // ACL - Anti Corruption Layer
     es.close = function() {
         es.store.db && es.store.db.close();
