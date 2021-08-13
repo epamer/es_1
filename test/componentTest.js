@@ -2,7 +2,7 @@ const test = require("tape");
 const httpClient = require("supertest");
 const {v4} = require('uuid');
 
-test.skip("Component test", async function(t) {
+test("Component test", async function(t) {
     const es = await require('../src/es')({});
     const app = require('../src/app')(es);
     const request = httpClient(app);
