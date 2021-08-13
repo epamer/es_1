@@ -35,21 +35,20 @@ module.exports = function(es) {
         };
     }
 
-    app.post('/limit', withErrorHandling(async (body) => {
-        const c = await repository.load(body.uuid);
+    function handle(command) {
+        return withErrorHandling(withPersistence(command));
+    }
+
+    app.post('/limit', handle((c, body) => {
         c.assignLimit(body.amount);
-        await repository.save(c);
     }));
-    app.post('/withdrawal', withErrorHandling(async (body) => {
-        const c = await repository.load(body.uuid);
+    app.post('/withdrawal', handle((c, body) => {
         c.withdraw(body.amount);
-        await repository.save(c);
     }));
-    app.post('/repayment', withErrorHandling(async (body) => {
-        const c = await repository.load(body.uuid);
+    app.post('/repayment', handle((c, body) => {
         c.repay(body.amount);
-        await repository.save(c);
     }));
+
     app.get('/limit/:uuid', async function (req, res) {
         const c = await repository.load(req.params.uuid);
         res.json({uuid: c.uuid(), limit: c.availableLimit()});
