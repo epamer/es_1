@@ -57,6 +57,24 @@ module.exports = function(es) {
         res.json({uuid: c.uuid(), limit: c.availableLimit()});
     });
 
+    function paginationLink({skip, limit, results}) {
+        const prevLink = skip > 0 ? `</events?skip=${Math.max(0, skip - limit)}&limit=${limit}>; rel="prev"` : "";
+        const nextLink = results === limit ? `</events?skip=${skip + limit}&limit=${limit}>; rel="next"` : "";
+
+        return [prevLink, nextLink].filter(x => x).join("; ");
+    }
+
+
+
+    app.get('/events', async function (req, res) {
+        const skip = Number(req.query.skip) || 0;
+        const limit = Math.min(Number(req.query.limit) || 10, 10);
+        const events = await repository.loadEvents({skip, limit});
+
+        res.header("Link", paginationLink({skip, limit, results: events.length}));
+        res.json(events);
+    });
+
     app.close = function() {
         return es.close();
     };

@@ -6,7 +6,7 @@ function now() { return new Date('August 19, 2018 23:15:30 UTC'); }
 const {card, recreateFrom} = cardFactory(now);
 
 test("should be able to save and load credit card", async function (t) {
-    const es = await init({});
+    const es = await init();
     const repository = cardRepository(recreateFrom, es);
     let c = card(Math.random()+"");
 
